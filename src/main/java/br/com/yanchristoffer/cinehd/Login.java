@@ -5,16 +5,25 @@
  */
 package br.com.yanchristoffer.cinehd;
 
+import br.com.yanchristoffer.entity.Usuario;
+import javax.swing.JOptionPane;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Query;
+
 /**
  *
  * @author yan
  */
 public class Login extends javax.swing.JFrame {
-
+    private SessionFactory sessionFactory ;
+    private Session s;
     /**
      * Creates new form Login
      */
     public Login() {
+        sessionFactory = HibernateUtil.getSessionFactory();
+        s = sessionFactory.getCurrentSession();
         initComponents();
     }
 
@@ -48,6 +57,11 @@ public class Login extends javax.swing.JFrame {
         jPasswordField1.setText("jPasswordField1");
 
         jButton1.setText("Entrar");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -89,6 +103,27 @@ public class Login extends javax.swing.JFrame {
     private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextField1ActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+       
+        this.s.beginTransaction();
+        Query q= this.s.getNamedQuery("Usuario.findByEmailAndPass");
+        q.setString("email",jTextField1.getText());
+        q.setString("senha",jPasswordField1.getText());
+        q.setMaxResults(1);
+        Usuario user = (Usuario) q.uniqueResult();
+        if(user != null){
+            JOptionPane.showMessageDialog(rootPane, "Logado");
+            Home h = new Home(user);
+            dispose();
+            h.setVisible(true);
+        }
+        else {
+            JOptionPane.showMessageDialog(rootPane, "Usuário inválido!");
+        }
+        this.s.close();
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
