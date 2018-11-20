@@ -53,5 +53,6 @@ Contributor(s):
     <mapping class="br.com.yanchristoffer.entity.Hd" />
     <mapping class="br.com.yanchristoffer.entity.TipoUsuario" />
     <mapping class="br.com.yanchristoffer.entity.Usuario" />
+    <mapping class="br.com.yanchristoffer.entity.HdFilme" />
   </session-factory>
 </hibernate-configuration>

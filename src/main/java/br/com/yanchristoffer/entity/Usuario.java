@@ -136,5 +136,6 @@ public class Usuario implements Serializable {
     public String toString() {
         return "br.com.yancchristoffer.entity.Usuario[ idUsuario=" + idUsuario + " ]";
     }
+
     
 }

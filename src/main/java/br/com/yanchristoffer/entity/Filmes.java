@@ -35,7 +35,8 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Filmes.findByTitulo", query = "SELECT f FROM Filmes f WHERE f.titulo = :titulo")
     , @NamedQuery(name = "Filmes.findByTamanho", query = "SELECT f FROM Filmes f WHERE f.tamanho = :tamanho")
     , @NamedQuery(name = "Filmes.findByGenero", query = "SELECT f FROM Filmes f WHERE f.genero = :genero")
-    , @NamedQuery(name = "Filmes.findByResolucao", query = "SELECT f FROM Filmes f WHERE f.resolucao = :resolucao")})
+    , @NamedQuery(name = "Filmes.findByResolucao", query = "SELECT f FROM Filmes f WHERE f.resolucao = :resolucao")
+    , @NamedQuery(name = "Filmes.findByHd", query = "SELECT f FROM Filmes f WHERE :hd in elements(f.hdCollection)")})
 public class Filmes implements Serializable {
 
     private static final long serialVersionUID = 1L;

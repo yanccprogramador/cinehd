@@ -8,6 +8,7 @@ package br.com.yanchristoffer.cinehd;
 import br.com.yanchristoffer.entity.Usuario;
 import java.util.List;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -17,33 +18,41 @@ import org.hibernate.SessionFactory;
  *
  * @author yan
  */
-public class Hd extends javax.swing.JFrame {
+public class Film extends javax.swing.JFrame {
     private Usuario user;
     private SessionFactory sessionFactory;
     private Session s;
     /**
      * Creates new form Hd
      */
-    public Hd() {
+    public Film() {
         initComponents();
     }
-    public Hd(Usuario user) {
+    public Film(Usuario user) {
         sessionFactory = HibernateUtil.getSessionFactory();
         s = sessionFactory.getCurrentSession();
         s.beginTransaction();
         initComponents();
         this.user = user;
-            Query q= s.getNamedQuery("Hd.findAll");
-            if(this.user.getIdTipoUsuario().getIdTipoUsuario()==2){
-             q= s.getNamedQuery("Hd.findByUser");
-             q.setParameter("id", this.user.getIdUsuario());
-            }
-            List<br.com.yanchristoffer.entity.Hd> hds =  q.list();
+            Query q= s.getNamedQuery("Filmes.findAll");
+            List<br.com.yanchristoffer.entity.Filmes> films =  q.list();
             DefaultTableModel model =(DefaultTableModel) jTable1.getModel();
-            for (br.com.yanchristoffer.entity.Hd hd : hds){
-                model.addRow(new Object[] {hd.getNome(),hd.getFilmesCollection().size(),hd.getIdUsuario().getNome(),hd.getTamanho(),hd.getEmptySpaces(), hd.getIdHD()});
+            for (br.com.yanchristoffer.entity.Filmes film : films){
+                for (br.com.yanchristoffer.entity.Hd hd: film.getHdCollection()) {
+                    if((this.user.getIdTipoUsuario().getIdTipoUsuario()==2 && hd.getIdUsuario().getIdUsuario()==this.user.getIdUsuario()) ||  this.user.getIdTipoUsuario().getIdTipoUsuario()==1){
+                        model.addRow(new Object[] {film.getTitulo(),film.getGenero(),film.getTamanho(),film.getResolucao(),hd.getNome(), film.getIdfilme()});
+                    }
+                }
             }
-        s.clear();    
+            Query q2= s.getNamedQuery("Hd.findAll");
+            if(this.user.getIdTipoUsuario().getIdTipoUsuario()==2){
+             q2= s.getNamedQuery("Hd.findByUser");
+             q2.setParameter("id", this.user.getIdUsuario());
+            }
+            List<br.com.yanchristoffer.entity.Hd> hds =  q2.list();
+            for (br.com.yanchristoffer.entity.Hd hd : hds){
+                   choice1.add(hd.getIdHD()+"-"+hd.getNome());
+            }
     }
 
     /**
@@ -60,7 +69,9 @@ public class Hd extends javax.swing.JFrame {
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
+        choice1 = new java.awt.Choice();
         jButton4 = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu2 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
@@ -69,11 +80,6 @@ public class Hd extends javax.swing.JFrame {
         jMenu3 = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        addWindowListener(new java.awt.event.WindowAdapter() {
-            public void windowClosed(java.awt.event.WindowEvent evt) {
-                formWindowClosed(evt);
-            }
-        });
 
         jTable1.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
@@ -81,14 +87,14 @@ public class Hd extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Nome", "Quantidade de Filmes", "Proprietario", "Tamanho (mb)", "Espaço disponível", "Id"
+                "Titulos", "Genero", "Tamanho(mb)", "Resolução", "Hd", "Id"
             }
         ) {
             Class[] types = new Class [] {
                 java.lang.String.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, true, false, false
+                false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -101,33 +107,35 @@ public class Hd extends javax.swing.JFrame {
         });
         jScrollPane1.setViewportView(jTable1);
 
-        jButton1.setText("Novo HD");
+        jButton1.setText("Novo Filme");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
             }
         });
 
-        jButton2.setText("Editar");
+        jButton2.setText("Excluir");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
             }
         });
 
-        jButton3.setText("Excluir");
+        jButton3.setText("Editar");
         jButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton3ActionPerformed(evt);
             }
         });
 
-        jButton4.setText("Formatar");
+        jButton4.setText("Filtrar");
         jButton4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton4ActionPerformed(evt);
             }
         });
+
+        jLabel1.setText("HD:");
 
         jMenu2.setText("Gestão");
 
@@ -172,32 +180,38 @@ public class Hd extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(35, 35, 35)
-                        .addComponent(jButton1)
-                        .addGap(18, 18, 18)
-                        .addComponent(jButton2)
-                        .addGap(18, 18, 18)
-                        .addComponent(jButton3)
-                        .addGap(28, 28, 28)
-                        .addComponent(jButton4)))
-                .addContainerGap(13, Short.MAX_VALUE))
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(20, 20, 20)
+                .addComponent(jButton1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jButton2)
+                .addGap(18, 18, 18)
+                .addComponent(jButton3)
+                .addGap(24, 24, 24)
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(choice1, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton4)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 35, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2)
-                    .addComponent(jButton3)
-                    .addComponent(jButton4))
-                .addGap(25, 25, 25))
+                .addGap(30, 30, 30)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jButton1)
+                        .addComponent(jButton2)
+                        .addComponent(jButton3))
+                    .addComponent(choice1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton4)
+                    .addComponent(jLabel1))
+                .addContainerGap(30, Short.MAX_VALUE))
         );
 
         pack();
@@ -206,35 +220,34 @@ public class Hd extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
         dispose();
-        CreateHD create= new CreateHD(this.user);
+        CreateFilm create= new CreateFilm(this.user);
         create.setVisible(true);
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
+        s = sessionFactory.getCurrentSession();
+        s.beginTransaction();
         Integer id= (int) jTable1.getValueAt(jTable1.getSelectedRow(), 5);
+        br.com.yanchristoffer.entity.Filmes filme= new br.com.yanchristoffer.entity.Filmes(id);
+        s.delete(filme);
+        s.flush();
+        s.clear();
+        Film f= new Film(this.user);
         dispose();
-        CreateHD create= new CreateHD(this.user,id);
-        create.setVisible(true);
+        f.setVisible(true);
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
-        s.beginTransaction();
-        Integer id= (int) jTable1.getValueAt(jTable1.getSelectedRow(), 5);
-        br.com.yanchristoffer.entity.Hd hd= new br.com.yanchristoffer.entity.Hd(id);
-        s.delete(hd);
-        s.flush();
-        s.clear();
+        //try{
         dispose();
-        Hd h= new Hd(this.user);
-        h.setVisible(true);
+        CreateFilm create= new CreateFilm(this.user,(int) jTable1.getValueAt(jTable1.getSelectedRow(), 5));
+        create.setVisible(true);
+        /*}catch(Exception e){
+            JOptionPane.showMessageDialog(rootPane, "Selecione um filme primeiro"+e.getMessage());
+        }*/
     }//GEN-LAST:event_jButton3ActionPerformed
-
-    private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
-        // TODO add your handling code here:
-       s.close();
-    }//GEN-LAST:event_formWindowClosed
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
         // TODO add your handling code here:
@@ -266,18 +279,47 @@ public class Hd extends javax.swing.JFrame {
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
-        s.beginTransaction();
-        Query q= s.getNamedQuery("Hd.findByIdHD");
-        q.setParameter("idHD",(int) jTable1.getValueAt(jTable1.getSelectedRow(), 5) );
-        q.setMaxResults(1);
-        br.com.yanchristoffer.entity.Hd hd= (br.com.yanchristoffer.entity.Hd) q.uniqueResult();
-        for(br.com.yanchristoffer.entity.Filmes filmes: hd.getFilmesCollection()){
-            s.delete(filmes);
-        }
-        s.flush();
-        s.clear();
-        dispose();
-        (new Hd(this.user)).setVisible(true);
+        s= sessionFactory.getCurrentSession();
+        jTable1= new JTable();
+         jTable1.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Titulos", "Genero", "Tamanho(mb)", "Resolução", "Hd", "Id"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane1.setViewportView(jTable1);
+         DefaultTableModel model =(DefaultTableModel) jTable1.getModel();
+         s.beginTransaction();
+         jTable1.removeAll();
+         Query q = s.getNamedQuery("Filmes.findAll");
+         List<br.com.yanchristoffer.entity.Filmes> films = q.list();
+            for (br.com.yanchristoffer.entity.Filmes film : films){
+                for (br.com.yanchristoffer.entity.Hd hd: film.getHdCollection()) {
+                    if((this.user.getIdTipoUsuario().getIdTipoUsuario()==2 && hd.getIdUsuario().getIdUsuario()==this.user.getIdUsuario()) ||  this.user.getIdTipoUsuario().getIdTipoUsuario()==1){
+                        if(hd.getIdHD()==Integer.parseInt(choice1.getSelectedItem().split("-")[0])){
+                            model.addRow(new Object[] {film.getTitulo(),film.getGenero(),film.getTamanho(),film.getResolucao(),hd.getNome(), film.getIdfilme()});
+                        }
+                    }
+                }
+            }
     }//GEN-LAST:event_jButton4ActionPerformed
 
     /**
@@ -297,29 +339,32 @@ public class Hd extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Hd.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Film.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Hd.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Film.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Hd.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Film.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Hd.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Film.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Hd().setVisible(true);
+                new Film().setVisible(true);
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private java.awt.Choice choice1;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
     private javax.swing.JMenuBar jMenuBar1;

@@ -33,7 +33,8 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Hd.findAll", query = "SELECT h FROM Hd h")
     , @NamedQuery(name = "Hd.findByIdHD", query = "SELECT h FROM Hd h WHERE h.idHD = :idHD")
     , @NamedQuery(name = "Hd.findByTamanho", query = "SELECT h FROM Hd h WHERE h.tamanho = :tamanho")
-    , @NamedQuery(name = "Hd.findByNome", query = "SELECT h FROM Hd h WHERE h.nome = :nome")})
+    , @NamedQuery(name = "Hd.findByNome", query = "SELECT h FROM Hd h WHERE h.nome = :nome")
+    , @NamedQuery(name = "Hd.findByUser", query = "SELECT h FROM Hd h WHERE h.idUsuario.idUsuario = :id")})
 public class Hd implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -99,6 +100,14 @@ public class Hd implements Serializable {
     public void setIdUsuario(Usuario idUsuario) {
         this.idUsuario = idUsuario;
     }
+    
+    public Double getEmptySpaces(){
+        Double total = 0.0;
+        for (Filmes filme:this.filmesCollection){
+            total+= filme.getTamanho();
+        }
+        return this.tamanho-total;
+    }
 
     @Override
     public int hashCode() {
@@ -122,7 +131,7 @@ public class Hd implements Serializable {
 
     @Override
     public String toString() {
-        return "br.com.yancchristoffer.entity.Hd[ idHD=" + idHD + " ]";
+        return "br.com.yancchristoffer.entity.Hd[ idHD=" + idHD + ", nome=" + nome + ", tamanho=" + tamanho + " ]";
     }
     
 }

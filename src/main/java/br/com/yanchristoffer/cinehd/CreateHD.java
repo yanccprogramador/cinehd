@@ -5,17 +5,84 @@
  */
 package br.com.yanchristoffer.cinehd;
 
+import br.com.yanchristoffer.entity.Usuario;
+import br.com.yanchristoffer.entity.Hd;
+import java.util.List;
+import javax.swing.JOptionPane;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+
 /**
  *
  * @author yan
  */
 public class CreateHD extends javax.swing.JFrame {
 
+    private SessionFactory sessionFactory;
+    private Session s;
+    private Usuario user;
+    private int idHd;
+
     /**
      * Creates new form CreateHD
      */
     public CreateHD() {
         initComponents();
+        this.idHd = 0;
+    }
+    public CreateHD(Usuario user) {
+        sessionFactory = HibernateUtil.getSessionFactory();
+        s = sessionFactory.getCurrentSession();
+        s.beginTransaction();
+        initComponents();
+        this.user = user;
+        if(this.user.getIdTipoUsuario().getIdTipoUsuario() != 2){
+            Query q = s.getNamedQuery("Usuario.findAll");
+            List<Usuario> users = q.list();
+            for(Usuario usuario : users){
+                if(usuario != this.user){
+                 choice1.add(usuario.getIdUsuario()+"-"+usuario.getNome());   
+                }   
+            }
+        }
+        choice1.add(this.user.getIdUsuario() +"-"+this.user.getNome());
+        this.idHd = 0;
+        s.clear();
+    }
+    public CreateHD(Usuario user,int idHd) {
+        sessionFactory = HibernateUtil.getSessionFactory();
+        s = sessionFactory.getCurrentSession();
+        s.beginTransaction();
+        initComponents();
+        this.user = user;
+        this.idHd = idHd;
+        Query q1 =s.getNamedQuery("Hd.findByIdHD");
+        q1.setParameter("idHD", idHd);
+        q1.setMaxResults(1);
+        br.com.yanchristoffer.entity.Hd hd = (br.com.yanchristoffer.entity.Hd) q1.uniqueResult(); 
+        jTextField1.setText(hd.getNome());
+        jTextField2.setText(hd.getTamanho().toString());
+        if(this.user.getIdTipoUsuario().getIdTipoUsuario() != 2){
+            Query q = s.getNamedQuery("Usuario.findAll");
+            List<Usuario> users = q.list();
+            int i = 0;
+            for(Usuario usuario : users){
+                if(usuario.getIdUsuario()==hd.getIdUsuario().getIdUsuario()){
+                choice1.select(i);
+                }
+                if(usuario != this.user){
+                 choice1.add(usuario.getIdUsuario()+"-"+usuario.getNome());   
+                } 
+                i++;
+            }
+        }
+        
+        choice1.add(this.user.getIdUsuario() +"-"+this.user.getNome());
+        if(this.user.getIdUsuario()==hd.getIdUsuario().getIdUsuario()){
+                choice1.select(this.user.getIdUsuario() +"-"+this.user.getNome());
+        }
+        s.clear();
     }
 
     /**
@@ -33,17 +100,35 @@ public class CreateHD extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jTextField1 = new javax.swing.JTextField();
-        choice1 = new java.awt.Choice();
         jTextField2 = new javax.swing.JTextField();
+        choice1 = new java.awt.Choice();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu2 = new javax.swing.JMenu();
+        jMenuItem1 = new javax.swing.JMenuItem();
+        jMenuItem2 = new javax.swing.JMenuItem();
+        jMenuItem4 = new javax.swing.JMenuItem();
         jMenu3 = new javax.swing.JMenu();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosed(java.awt.event.WindowEvent evt) {
+                formWindowClosed(evt);
+            }
+        });
 
         jButton1.setText("Cadastrar/Editar");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jButton2.setText("Limpar");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         jLabel1.setText("Nome");
 
@@ -51,14 +136,40 @@ public class CreateHD extends javax.swing.JFrame {
 
         jLabel3.setText("Tamanho");
 
-        jTextField1.setText("jTextField1");
-
-        jTextField2.setText("jTextField2");
-
         jMenu2.setText("Gestão");
+
+        jMenuItem1.setText("Hd");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
+        jMenu2.add(jMenuItem1);
+
+        jMenuItem2.setText("Filmes");
+        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem2ActionPerformed(evt);
+            }
+        });
+        jMenu2.add(jMenuItem2);
+
+        jMenuItem4.setText("Compartilhamento");
+        jMenuItem4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem4ActionPerformed(evt);
+            }
+        });
+        jMenu2.add(jMenuItem4);
+
         jMenuBar1.add(jMenu2);
 
         jMenu3.setText("Sair");
+        jMenu3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenu3ActionPerformed(evt);
+            }
+        });
         jMenuBar1.add(jMenu3);
 
         setJMenuBar(jMenuBar1);
@@ -71,22 +182,24 @@ public class CreateHD extends javax.swing.JFrame {
                 .addGap(69, 69, 69)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addGap(18, 18, 18)
-                        .addComponent(jTextField2))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(choice1, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jButton1)
                         .addGap(68, 68, 68)
-                        .addComponent(jButton2)))
-                .addContainerGap(91, Short.MAX_VALUE))
+                        .addComponent(jButton2))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel2))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jTextField2, javax.swing.GroupLayout.DEFAULT_SIZE, 163, Short.MAX_VALUE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(choice1, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE)))))
+                .addContainerGap(83, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -112,6 +225,74 @@ public class CreateHD extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        try{
+        s= sessionFactory.getCurrentSession();
+        s.beginTransaction();
+        Hd hd = new Hd();
+        hd.setNome(jTextField1.getText());
+        Query q = s.getNamedQuery("Usuario.findByIdUsuario");
+        q.setParameter("idUsuario",Integer.parseInt(choice1.getItem(choice1.getSelectedIndex()).split("-")[0]));
+        q.setMaxResults(1);
+        Usuario usuario=(Usuario) q.uniqueResult();
+        hd.setIdUsuario(usuario);
+        hd.setTamanho(Integer.parseInt(jTextField2.getText()));
+        if(this.idHd != 0){
+            hd.setIdHD(this.idHd);   
+        }
+        s.saveOrUpdate(hd);
+        s.flush();
+        JOptionPane.showMessageDialog(rootPane, "Salvo com sucesso");
+        s.clear();
+        dispose();
+        br.com.yanchristoffer.cinehd.Hd h = new br.com.yanchristoffer.cinehd.Hd(this.user);
+        h.setVisible(true);
+        }catch(Exception e){
+            JOptionPane.showMessageDialog(rootPane, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
+        // TODO add your handling code here:
+        s.close();
+    }//GEN-LAST:event_formWindowClosed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+        jTextField1.setText("");
+        jTextField2.setText("");
+        choice1.select(0);
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        // TODO add your handling code here:
+        br.com.yanchristoffer.cinehd.Hd hd= new br.com.yanchristoffer.cinehd.Hd(this.user);
+        dispose();
+        hd.setVisible(true);
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
+
+    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
+        // TODO add your handling code here:
+        Film film= new Film(this.user);
+        dispose();
+        film.setVisible(true);
+    }//GEN-LAST:event_jMenuItem2ActionPerformed
+
+    private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
+        // TODO add your handling code here:
+        dispose();
+        Share s= new Share(this.user);
+        s.setVisible(true);
+    }//GEN-LAST:event_jMenuItem4ActionPerformed
+
+    private void jMenu3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenu3ActionPerformed
+        // TODO add your handling code here:
+        dispose();
+        Login l = new Login();
+        l.setVisible(true);
+    }//GEN-LAST:event_jMenu3ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -158,6 +339,9 @@ public class CreateHD extends javax.swing.JFrame {
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
     private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem2;
+    private javax.swing.JMenuItem jMenuItem4;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     // End of variables declaration//GEN-END:variables

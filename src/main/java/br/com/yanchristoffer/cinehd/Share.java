@@ -6,23 +6,54 @@
 package br.com.yanchristoffer.cinehd;
 
 import br.com.yanchristoffer.entity.Usuario;
+import br.com.yanchristoffer.entity.Hd;
+import br.com.yanchristoffer.entity.Filmes;
+import br.com.yanchristoffer.entity.HdFilme;
+import java.util.Collection;
+import java.util.List;
+import javax.swing.JOptionPane;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 
 /**
  *
  * @author yan
  */
-public class Home extends javax.swing.JFrame {
-
+public class Share extends javax.swing.JFrame {
+    private SessionFactory sessionFactory;
+    private Session s;
     private Usuario user;
     /**
-     * Creates new form Home
+     * Creates new form Share
      */
-    public Home() {
+    public Share() {
         initComponents();
     }
-    public Home(Usuario user) {
-        this.user=user;
+    public Share(Usuario user) {
+        this.user = user;
+        sessionFactory = HibernateUtil.getSessionFactory();
+        s=sessionFactory.getCurrentSession();
         initComponents();
+        s.beginTransaction();
+        Query q = s.getNamedQuery("Hd.findAll");
+        if(this.user.getIdTipoUsuario().getIdTipoUsuario()==2){
+             q= s.getNamedQuery("Hd.findByUser");
+             q.setParameter("id", this.user.getIdUsuario());
+        }
+        List<Hd> hds = q.list();
+        for (Hd hd: hds){
+            choice2.addItem(hd.getIdHD()+"-"+hd.getNome());
+        }
+        Query q2 = s.getNamedQuery("Filmes.findAll");
+        List<Filmes> filmes = q2.list();
+        for (Filmes filme: filmes){
+            if((this.user.getIdTipoUsuario().getIdTipoUsuario()==2 && this.hasAny(filme.getHdCollection(), hds)) ||  this.user.getIdTipoUsuario().getIdTipoUsuario()==1){
+                choice1.addItem(filme.getIdfilme()+"-"+filme.getTitulo());
+            }
+                
+        }
+        s.clear();
     }
 
     /**
@@ -34,6 +65,9 @@ public class Home extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        choice1 = new java.awt.Choice();
+        choice2 = new java.awt.Choice();
+        button1 = new java.awt.Button();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu2 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
@@ -42,6 +76,18 @@ public class Home extends javax.swing.JFrame {
         jMenu3 = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosed(java.awt.event.WindowEvent evt) {
+                formWindowClosed(evt);
+            }
+        });
+
+        button1.setLabel("Compartilhar");
+        button1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                button1ActionPerformed(evt);
+            }
+        });
 
         jMenu2.setText("Gestão");
 
@@ -85,19 +131,54 @@ public class Home extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(165, 165, 165)
+                        .addComponent(button1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(79, 79, 79)
+                        .addComponent(choice1, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(65, 65, 65)
+                        .addComponent(choice2, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(80, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 279, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(77, 77, 77)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(choice2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(choice1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 121, Short.MAX_VALUE)
+                .addComponent(button1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(39, 39, 39))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void button1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button1ActionPerformed
+        // TODO add your handling code here:
+        try{
+        s.beginTransaction();
+        HdFilme hd= new HdFilme(Integer.parseInt(choice1.getSelectedItem().split("-")[0]),Integer.parseInt(choice2.getSelectedItem().split("-")[0]));
+        s.saveOrUpdate(hd);
+        s.clear();
+        JOptionPane.showMessageDialog(rootPane,"Salvo com sucesso");
+        }catch(Exception e){
+            JOptionPane.showMessageDialog(rootPane, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_button1ActionPerformed
+
+    private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
+        // TODO add your handling code here:
+        s.close();
+    }//GEN-LAST:event_formWindowClosed
+
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
         // TODO add your handling code here:
-        Hd hd= new Hd(this.user);
+        br.com.yanchristoffer.cinehd.Hd hd= new br.com.yanchristoffer.cinehd.Hd(this.user);
         dispose();
         hd.setVisible(true);
     }//GEN-LAST:event_jMenuItem1ActionPerformed
@@ -140,25 +221,36 @@ public class Home extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Home.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Share.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Home.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Share.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Home.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Share.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Home.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Share.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Home().setVisible(true);
+                new Share().setVisible(true);
             }
         });
     }
+    public boolean hasAny(Collection<Hd> a,Collection<Hd> b){
+        for(Hd h:a){
+            if(b.contains(h)){
+                return true;
+            }
+        }
+        return false;
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private java.awt.Button button1;
+    private java.awt.Choice choice1;
+    private java.awt.Choice choice2;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
     private javax.swing.JMenuBar jMenuBar1;
