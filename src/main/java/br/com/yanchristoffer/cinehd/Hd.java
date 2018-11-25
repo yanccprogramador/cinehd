@@ -66,7 +66,7 @@ public class Hd extends javax.swing.JFrame {
         jMenuItem1 = new javax.swing.JMenuItem();
         jMenuItem2 = new javax.swing.JMenuItem();
         jMenuItem4 = new javax.swing.JMenuItem();
-        jMenu3 = new javax.swing.JMenu();
+        jMenuItem3 = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -81,7 +81,7 @@ public class Hd extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Nome", "Quantidade de Filmes", "Proprietario", "Tamanho (mb)", "Espaço disponível", "Id"
+                "Nome", "Quantidade de Filmes", "Proprietario", "Tamanho (Gb)", "Espaço disponível", "Id"
             }
         ) {
             Class[] types = new Class [] {
@@ -155,15 +155,15 @@ public class Hd extends javax.swing.JFrame {
         });
         jMenu2.add(jMenuItem4);
 
-        jMenuBar1.add(jMenu2);
-
-        jMenu3.setText("Sair");
-        jMenu3.addActionListener(new java.awt.event.ActionListener() {
+        jMenuItem3.setText("Sair");
+        jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenu3ActionPerformed(evt);
+                jMenuItem3ActionPerformed(evt);
             }
         });
-        jMenuBar1.add(jMenu3);
+        jMenu2.add(jMenuItem3);
+
+        jMenuBar1.add(jMenu2);
 
         setJMenuBar(jMenuBar1);
 
@@ -236,6 +236,22 @@ public class Hd extends javax.swing.JFrame {
        s.close();
     }//GEN-LAST:event_formWindowClosed
 
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        // TODO add your handling code here:
+        s.beginTransaction();
+        Query q= s.getNamedQuery("Hd.findByIdHD");
+        q.setParameter("idHD",(int) jTable1.getValueAt(jTable1.getSelectedRow(), 5) );
+        q.setMaxResults(1);
+        br.com.yanchristoffer.entity.Hd hd= (br.com.yanchristoffer.entity.Hd) q.uniqueResult();
+        for(br.com.yanchristoffer.entity.Filmes filmes: hd.getFilmesCollection()){
+            s.delete(filmes);
+        }
+        s.flush();
+        s.clear();
+        dispose();
+        (new Hd(this.user)).setVisible(true);
+    }//GEN-LAST:event_jButton4ActionPerformed
+
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
         // TODO add your handling code here:
         Hd hd= new Hd(this.user);
@@ -253,32 +269,16 @@ public class Hd extends javax.swing.JFrame {
     private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
         // TODO add your handling code here:
         dispose();
-        Share s= new Share(this.user);
+        Shares s= new Shares(this.user);
         s.setVisible(true);
     }//GEN-LAST:event_jMenuItem4ActionPerformed
 
-    private void jMenu3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenu3ActionPerformed
+    private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
         // TODO add your handling code here:
         dispose();
-        Login l = new Login();
+        Login l= new Login();
         l.setVisible(true);
-    }//GEN-LAST:event_jMenu3ActionPerformed
-
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        // TODO add your handling code here:
-        s.beginTransaction();
-        Query q= s.getNamedQuery("Hd.findByIdHD");
-        q.setParameter("idHD",(int) jTable1.getValueAt(jTable1.getSelectedRow(), 5) );
-        q.setMaxResults(1);
-        br.com.yanchristoffer.entity.Hd hd= (br.com.yanchristoffer.entity.Hd) q.uniqueResult();
-        for(br.com.yanchristoffer.entity.Filmes filmes: hd.getFilmesCollection()){
-            s.delete(filmes);
-        }
-        s.flush();
-        s.clear();
-        dispose();
-        (new Hd(this.user)).setVisible(true);
-    }//GEN-LAST:event_jButton4ActionPerformed
+    }//GEN-LAST:event_jMenuItem3ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -321,10 +321,10 @@ public class Hd extends javax.swing.JFrame {
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JMenu jMenu2;
-    private javax.swing.JMenu jMenu3;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
+    private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;

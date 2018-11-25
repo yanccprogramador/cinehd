@@ -68,12 +68,12 @@ public class CreateHD extends javax.swing.JFrame {
             List<Usuario> users = q.list();
             int i = 0;
             for(Usuario usuario : users){
-                if(usuario.getIdUsuario()==hd.getIdUsuario().getIdUsuario()){
-                choice1.select(i);
-                }
                 if(usuario != this.user){
                  choice1.add(usuario.getIdUsuario()+"-"+usuario.getNome());   
                 } 
+                if(usuario.getIdUsuario()==hd.getIdUsuario().getIdUsuario()){
+                choice1.select(i);
+                }
                 i++;
             }
         }
@@ -107,7 +107,7 @@ public class CreateHD extends javax.swing.JFrame {
         jMenuItem1 = new javax.swing.JMenuItem();
         jMenuItem2 = new javax.swing.JMenuItem();
         jMenuItem4 = new javax.swing.JMenuItem();
-        jMenu3 = new javax.swing.JMenu();
+        jMenuItem3 = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -134,7 +134,7 @@ public class CreateHD extends javax.swing.JFrame {
 
         jLabel2.setText("Proprietario");
 
-        jLabel3.setText("Tamanho");
+        jLabel3.setText("Tamanho (GB)");
 
         jMenu2.setText("Gestão");
 
@@ -162,15 +162,15 @@ public class CreateHD extends javax.swing.JFrame {
         });
         jMenu2.add(jMenuItem4);
 
-        jMenuBar1.add(jMenu2);
-
-        jMenu3.setText("Sair");
-        jMenu3.addActionListener(new java.awt.event.ActionListener() {
+        jMenuItem3.setText("Sair");
+        jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenu3ActionPerformed(evt);
+                jMenuItem3ActionPerformed(evt);
             }
         });
-        jMenuBar1.add(jMenu3);
+        jMenu2.add(jMenuItem3);
+
+        jMenuBar1.add(jMenu2);
 
         setJMenuBar(jMenuBar1);
 
@@ -199,7 +199,7 @@ public class CreateHD extends javax.swing.JFrame {
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(choice1, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(0, 0, Short.MAX_VALUE)))))
-                .addContainerGap(83, Short.MAX_VALUE))
+                .addContainerGap(69, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -283,16 +283,16 @@ public class CreateHD extends javax.swing.JFrame {
     private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
         // TODO add your handling code here:
         dispose();
-        Share s= new Share(this.user);
+        Shares s= new Shares(this.user);
         s.setVisible(true);
     }//GEN-LAST:event_jMenuItem4ActionPerformed
 
-    private void jMenu3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenu3ActionPerformed
+    private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
         // TODO add your handling code here:
         dispose();
-        Login l = new Login();
+        Login l= new Login();
         l.setVisible(true);
-    }//GEN-LAST:event_jMenu3ActionPerformed
+    }//GEN-LAST:event_jMenuItem3ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -337,10 +337,10 @@ public class CreateHD extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JMenu jMenu2;
-    private javax.swing.JMenu jMenu3;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
+    private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;

@@ -33,15 +33,15 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItem4ActionPerformed"/>
               </Events>
             </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="jMenuItem3">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Sair"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItem3ActionPerformed"/>
+              </Events>
+            </MenuItem>
           </SubComponents>
-        </Menu>
-        <Menu class="javax.swing.JMenu" name="jMenu3">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Sair"/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenu3ActionPerformed"/>
-          </Events>
         </Menu>
       </SubComponents>
     </Menu>
@@ -129,7 +129,7 @@
                 <Column editable="false" title="Nome" type="java.lang.String"/>
                 <Column editable="false" title="Quantidade de Filmes" type="java.lang.Integer"/>
                 <Column editable="false" title="Proprietario" type="java.lang.String"/>
-                <Column editable="true" title="Tamanho (mb)" type="java.lang.String"/>
+                <Column editable="true" title="Tamanho (Gb)" type="java.lang.String"/>
                 <Column editable="false" title="Espa&#xe7;o dispon&#xed;vel" type="java.lang.String"/>
                 <Column editable="false" title="Id" type="java.lang.Integer"/>
               </Table>

@@ -5,6 +5,7 @@
  */
 package br.com.yanchristoffer.cinehd;
 
+import br.com.yanchristoffer.entity.Compartilhamentos;
 import br.com.yanchristoffer.entity.Usuario;
 import br.com.yanchristoffer.entity.Hd;
 import br.com.yanchristoffer.entity.Filmes;
@@ -73,7 +74,7 @@ public class Share extends javax.swing.JFrame {
         jMenuItem1 = new javax.swing.JMenuItem();
         jMenuItem2 = new javax.swing.JMenuItem();
         jMenuItem4 = new javax.swing.JMenuItem();
-        jMenu3 = new javax.swing.JMenu();
+        jMenuItem3 = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -115,15 +116,15 @@ public class Share extends javax.swing.JFrame {
         });
         jMenu2.add(jMenuItem4);
 
-        jMenuBar1.add(jMenu2);
-
-        jMenu3.setText("Sair");
-        jMenu3.addActionListener(new java.awt.event.ActionListener() {
+        jMenuItem3.setText("Sair");
+        jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenu3ActionPerformed(evt);
+                jMenuItem3ActionPerformed(evt);
             }
         });
-        jMenuBar1.add(jMenu3);
+        jMenu2.add(jMenuItem3);
+
+        jMenuBar1.add(jMenu2);
 
         setJMenuBar(jMenuBar1);
 
@@ -162,8 +163,12 @@ public class Share extends javax.swing.JFrame {
         // TODO add your handling code here:
         try{
         s.beginTransaction();
-        HdFilme hd= new HdFilme(Integer.parseInt(choice1.getSelectedItem().split("-")[0]),Integer.parseInt(choice2.getSelectedItem().split("-")[0]));
+        HdFilme hd= new HdFilme(Integer.parseInt(choice2.getSelectedItem().split("-")[0]),Integer.parseInt(choice1.getSelectedItem().split("-")[0]));
         s.saveOrUpdate(hd);
+        Compartilhamentos c= new Compartilhamentos();
+        c.setFilme(choice1.getSelectedItem().split("-")[1]);
+        c.setHd(choice2.getSelectedItem().split("-")[1]);
+        s.saveOrUpdate(c);
         s.clear();
         JOptionPane.showMessageDialog(rootPane,"Salvo com sucesso");
         }catch(Exception e){
@@ -193,16 +198,16 @@ public class Share extends javax.swing.JFrame {
     private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
         // TODO add your handling code here:
         dispose();
-        Share s= new Share(this.user);
+        Shares s= new Shares(this.user);
         s.setVisible(true);
     }//GEN-LAST:event_jMenuItem4ActionPerformed
 
-    private void jMenu3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenu3ActionPerformed
+    private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
         // TODO add your handling code here:
         dispose();
-        Login l = new Login();
+        Login l= new Login();
         l.setVisible(true);
-    }//GEN-LAST:event_jMenu3ActionPerformed
+    }//GEN-LAST:event_jMenuItem3ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -252,10 +257,10 @@ public class Share extends javax.swing.JFrame {
     private java.awt.Choice choice1;
     private java.awt.Choice choice2;
     private javax.swing.JMenu jMenu2;
-    private javax.swing.JMenu jMenu3;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
+    private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
     // End of variables declaration//GEN-END:variables
 }

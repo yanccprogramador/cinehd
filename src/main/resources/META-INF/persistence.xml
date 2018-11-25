@@ -7,6 +7,7 @@
     <class>br.com.yanchristoffer.entity.TipoUsuario</class>
     <class>br.com.yanchristoffer.entity.Usuario</class>
     <class>br.com.yanchristoffer.entity.HdFilm</class>
+    <class>br.com.yanchristoffer.entity.Compartilhamentos</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/CINEHD"/>
       <property name="javax.persistence.jdbc.user" value="root"/>
