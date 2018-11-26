@@ -220,6 +220,7 @@ public class Hd extends javax.swing.JFrame {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
+        s= sessionFactory.getCurrentSession();
         s.beginTransaction();
         Integer id= (int) jTable1.getValueAt(jTable1.getSelectedRow(), 5);
         br.com.yanchristoffer.entity.Hd hd= new br.com.yanchristoffer.entity.Hd(id);
@@ -238,6 +239,7 @@ public class Hd extends javax.swing.JFrame {
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
+        s= sessionFactory.getCurrentSession();
         s.beginTransaction();
         Query q= s.getNamedQuery("Hd.findByIdHD");
         q.setParameter("idHD",(int) jTable1.getValueAt(jTable1.getSelectedRow(), 5) );
